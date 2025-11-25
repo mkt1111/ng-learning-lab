@@ -3,6 +3,18 @@ import sdk from "@stackblitz/sdk";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, ExternalLink } from "lucide-react";
 
+const ANGULAR_DEPENDENCIES = {
+  "@angular/core": "latest",
+  "@angular/common": "latest",
+  "@angular/compiler": "latest",
+  "@angular/platform-browser": "latest",
+  "@angular/platform-browser-dynamic": "latest",
+  "@angular/forms": "latest",
+  "rxjs": "latest",
+  "zone.js": "latest",
+  "tslib": "latest",
+};
+
 interface StackBlitzEditorProps {
   code: string;
   title?: string;
@@ -25,6 +37,7 @@ export const StackBlitzEditor = ({ code, title = "Angular Example" }: StackBlitz
     title: title,
     description: "Angular code example from lesson",
     template: "angular-cli" as const,
+    dependencies: ANGULAR_DEPENDENCIES,
     files: {
       "src/index.html": `<!DOCTYPE html>
 <html lang="en">
@@ -79,6 +92,7 @@ platformBrowserDynamic().bootstrapModule(AppModule)
           title: title,
           description: "Angular code example from lesson",
           template: "angular-cli" as const,
+          dependencies: ANGULAR_DEPENDENCIES,
           files: {
             "src/index.html": `<!DOCTYPE html>
 <html lang="en">
