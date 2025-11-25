@@ -26,23 +26,23 @@ export const StackBlitzEditor = ({ code, title = "Angular Example" }: StackBlitz
     description: "Angular code example from lesson",
     template: "angular-cli" as const,
     files: {
-      "src/index.html": `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Angular Example</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
-  <app-root></app-root>
-</body>
-</html>`,
       "src/app/app.component.ts": code,
-      "src/main.ts": `import { bootstrapApplication } from '@angular/platform-browser';
-import { ${componentName} } from './app/app.component';
+      "src/app/app.module.ts": `import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
+import { ${componentName} } from './app.component';
 
-bootstrapApplication(${componentName}).catch(err => console.error(err));`,
+@NgModule({
+  declarations: [${componentName}],
+  imports: [BrowserModule, FormsModule],
+  bootstrap: [${componentName}]
+})
+export class AppModule { }`,
+      "src/main.ts": `import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { AppModule } from './app/app.module';
+
+platformBrowserDynamic().bootstrapModule(AppModule)
+  .catch(err => console.error(err));`,
       "src/styles.css": `body { 
   font-family: Arial, sans-serif; 
   padding: 20px;
@@ -68,23 +68,23 @@ bootstrapApplication(${componentName}).catch(err => console.error(err));`,
           description: "Angular code example from lesson",
           template: "angular-cli" as const,
           files: {
-            "src/index.html": `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Angular Example</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
-  <app-root></app-root>
-</body>
-</html>`,
             "src/app/app.component.ts": codeContent,
-            "src/main.ts": `import { bootstrapApplication } from '@angular/platform-browser';
-import { ${compName} } from './app/app.component';
+            "src/app/app.module.ts": `import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
+import { ${compName} } from './app.component';
 
-bootstrapApplication(${compName}).catch(err => console.error(err));`,
+@NgModule({
+  declarations: [${compName}],
+  imports: [BrowserModule, FormsModule],
+  bootstrap: [${compName}]
+})
+export class AppModule { }`,
+            "src/main.ts": `import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { AppModule } from './app/app.module';
+
+platformBrowserDynamic().bootstrapModule(AppModule)
+  .catch(err => console.error(err));`,
             "src/styles.css": `body { 
   font-family: Arial, sans-serif; 
   padding: 20px;
