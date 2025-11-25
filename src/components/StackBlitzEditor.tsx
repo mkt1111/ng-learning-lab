@@ -31,15 +31,36 @@ export const StackBlitzEditor = ({ code, title = "Angular Example" }: StackBlitz
     return match ? match[1] : 'AppComponent';
   };
 
+  // Convert non-standalone component to standalone
+  const convertToStandalone = (codeStr: string): string => {
+    // Check if already standalone
+    if (codeStr.includes('standalone:')) {
+      return codeStr;
+    }
+
+    // Add standalone: true and imports to the @Component decorator
+    const componentMatch = codeStr.match(/@Component\(\{([^}]+)\}\)/s);
+    if (componentMatch) {
+      const decoratorContent = componentMatch[1];
+      const newDecorator = `@Component({\n  standalone: true,\n  imports: [CommonModule, FormsModule],${decoratorContent}})`;
+      return codeStr.replace(/@Component\(\{[^}]+\}\)/s, newDecorator);
+    }
+    return codeStr;
+  };
+
   const componentName = useMemo(() => extractComponentName(code), [code]);
 
-  const projectConfig = useMemo(() => ({
-    title: title,
-    description: "Angular code example from lesson",
-    template: "angular-cli" as const,
-    dependencies: ANGULAR_DEPENDENCIES,
-    files: {
-      "src/index.html": `<!DOCTYPE html>
+  const projectConfig = useMemo(() => {
+    const standaloneCode = convertToStandalone(code);
+    const compName = extractComponentName(standaloneCode);
+    
+    return {
+      title: title,
+      description: "Angular code example from lesson",
+      template: "angular-cli" as const,
+      dependencies: ANGULAR_DEPENDENCIES,
+      files: {
+        "src/index.html": `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -51,31 +72,23 @@ export const StackBlitzEditor = ({ code, title = "Angular Example" }: StackBlitz
   <app-root></app-root>
 </body>
 </html>`,
-      "src/app/app.component.ts": code,
-      "src/app/app.module.ts": `import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+        "src/app/app.component.ts": `import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ${componentName} } from './app.component';
+${standaloneCode}`,
+        "src/main.ts": `import { bootstrapApplication } from '@angular/platform-browser';
+import { ${compName} } from './app/app.component';
 
-@NgModule({
-  declarations: [${componentName}],
-  imports: [BrowserModule, FormsModule],
-  bootstrap: [${componentName}]
-})
-export class AppModule { }`,
-      "src/main.ts": `import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { AppModule } from './app/app.module';
-
-platformBrowserDynamic().bootstrapModule(AppModule)
+bootstrapApplication(${compName})
   .catch(err => console.error(err));`,
-      "src/styles.css": `body { 
+        "src/styles.css": `body { 
   font-family: Arial, sans-serif; 
   padding: 20px;
   background: #1e1e1e;
   color: #fff;
 }`,
-    },
-  }), [code, title, componentName]);
+      },
+    };
+  }, [code, title]);
 
   const embedProject = async (codeContent: string) => {
     if (!containerRef.current) return;
@@ -84,7 +97,8 @@ platformBrowserDynamic().bootstrapModule(AppModule)
       setIsEmbedding(true);
       containerRef.current.innerHTML = '';
       
-      const compName = extractComponentName(codeContent);
+      const standaloneCode = convertToStandalone(codeContent);
+      const compName = extractComponentName(standaloneCode);
       
       await sdk.embedProject(
         containerRef.current,
@@ -106,22 +120,13 @@ platformBrowserDynamic().bootstrapModule(AppModule)
   <app-root></app-root>
 </body>
 </html>`,
-            "src/app/app.component.ts": codeContent,
-            "src/app/app.module.ts": `import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+            "src/app/app.component.ts": `import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ${compName} } from './app.component';
+${standaloneCode}`,
+            "src/main.ts": `import { bootstrapApplication } from '@angular/platform-browser';
+import { ${compName} } from './app/app.component';
 
-@NgModule({
-  declarations: [${compName}],
-  imports: [BrowserModule, FormsModule],
-  bootstrap: [${compName}]
-})
-export class AppModule { }`,
-            "src/main.ts": `import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { AppModule } from './app/app.module';
-
-platformBrowserDynamic().bootstrapModule(AppModule)
+bootstrapApplication(${compName})
   .catch(err => console.error(err));`,
             "src/styles.css": `body { 
   font-family: Arial, sans-serif; 
