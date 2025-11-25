@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -14,6 +14,11 @@ interface QuizCardProps {
 export const QuizCard = ({ quiz }: QuizCardProps) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
+
+  useEffect(() => {
+    setSelectedAnswer(null);
+    setShowResult(false);
+  }, [quiz]);
 
   const handleSubmit = () => {
     if (selectedAnswer !== null) {
@@ -48,20 +53,19 @@ export const QuizCard = ({ quiz }: QuizCardProps) => {
           {quiz.options.map((option, index) => (
             <div
               key={index}
+              onClick={() => !showResult && setSelectedAnswer(index)}
               className={cn(
-                "flex items-center space-x-3 p-3 rounded-lg border transition-smooth",
+                "flex items-center space-x-3 p-3 rounded-lg border transition-smooth cursor-pointer",
                 showResult && index === quiz.correctAnswer && "border-success bg-success/5",
                 showResult && selectedAnswer === index && index !== quiz.correctAnswer && "border-destructive bg-destructive/5",
-                !showResult && "hover:bg-muted"
+                !showResult && "hover:bg-muted",
+                showResult && "cursor-default"
               )}
             >
               <RadioGroupItem value={index.toString()} id={`option-${index}`} disabled={showResult} />
               <Label
                 htmlFor={`option-${index}`}
-                className={cn(
-                  "flex-1 cursor-pointer",
-                  showResult && "cursor-default"
-                )}
+                className="flex-1 cursor-pointer pointer-events-none"
               >
                 {option}
               </Label>

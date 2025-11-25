@@ -2,6 +2,7 @@ import { useParams, Navigate } from "react-router-dom";
 import { Sidebar } from "@/components/Sidebar";
 import { CodeBlock } from "@/components/CodeBlock";
 import { QuizCard } from "@/components/QuizCard";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -27,6 +28,7 @@ const LessonPage = () => {
 
   return (
     <div className="flex h-screen overflow-hidden">
+      <ThemeToggle />
       <Sidebar currentLessonId={lessonId || ""} />
       
       <main className="flex-1 overflow-y-auto">
