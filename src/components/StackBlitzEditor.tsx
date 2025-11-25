@@ -13,17 +13,24 @@ export const StackBlitzEditor = ({ code, title = "Angular Example" }: StackBlitz
   const [isEmbedding, setIsEmbedding] = useState(false);
   const originalCode = useMemo(() => code, []);
 
+  // Extract component class name from the code
+  const extractComponentName = (codeStr: string): string => {
+    const match = codeStr.match(/export\s+class\s+(\w+)/);
+    return match ? match[1] : 'AppComponent';
+  };
+
+  const componentName = useMemo(() => extractComponentName(code), [code]);
+
   const projectConfig = useMemo(() => ({
     title: title,
     description: "Angular code example from lesson",
     template: "angular-cli" as const,
     files: {
+      "src/app/app.component.ts": code,
       "src/main.ts": `import { bootstrapApplication } from '@angular/platform-browser';
-import { Component } from '@angular/core';
+import { ${componentName} } from './app/app.component';
 
-${code}
-
-bootstrapApplication(AppComponent).catch(err => console.error(err));`,
+bootstrapApplication(${componentName}).catch(err => console.error(err));`,
       "src/styles.css": `body { 
   font-family: Arial, sans-serif; 
   padding: 20px;
@@ -31,27 +38,29 @@ bootstrapApplication(AppComponent).catch(err => console.error(err));`,
   color: #fff;
 }`,
     },
-  }), [code, title]);
+  }), [code, title, componentName]);
 
   const embedProject = async (codeContent: string) => {
     if (!containerRef.current) return;
     
     try {
       setIsEmbedding(true);
-      // Clear the container first
       containerRef.current.innerHTML = '';
+      
+      const compName = extractComponentName(codeContent);
       
       await sdk.embedProject(
         containerRef.current,
         {
-          ...projectConfig,
+          title: title,
+          description: "Angular code example from lesson",
+          template: "angular-cli" as const,
           files: {
+            "src/app/app.component.ts": codeContent,
             "src/main.ts": `import { bootstrapApplication } from '@angular/platform-browser';
-import { Component } from '@angular/core';
+import { ${compName} } from './app/app.component';
 
-${codeContent}
-
-bootstrapApplication(AppComponent).catch(err => console.error(err));`,
+bootstrapApplication(${compName}).catch(err => console.error(err));`,
             "src/styles.css": `body { 
   font-family: Arial, sans-serif; 
   padding: 20px;
@@ -62,7 +71,7 @@ bootstrapApplication(AppComponent).catch(err => console.error(err));`,
         },
         {
           height: 500,
-          openFile: "src/main.ts",
+          openFile: "src/app/app.component.ts",
           view: "preview",
           theme: "dark",
           hideExplorer: true,
@@ -77,7 +86,6 @@ bootstrapApplication(AppComponent).catch(err => console.error(err));`,
   };
 
   useEffect(() => {
-    // Small delay to ensure DOM is ready
     const timer = setTimeout(() => {
       embedProject(code);
     }, 100);
@@ -90,23 +98,7 @@ bootstrapApplication(AppComponent).catch(err => console.error(err));`,
   };
 
   const handleOpenInStackBlitz = async () => {
-    await sdk.openProject({
-      ...projectConfig,
-      files: {
-        "src/main.ts": `import { bootstrapApplication } from '@angular/platform-browser';
-import { Component } from '@angular/core';
-
-${originalCode}
-
-bootstrapApplication(AppComponent).catch(err => console.error(err));`,
-        "src/styles.css": `body { 
-  font-family: Arial, sans-serif; 
-  padding: 20px;
-  background: #1e1e1e;
-  color: #fff;
-}`,
-      }
-    });
+    await sdk.openProject(projectConfig);
   };
 
   return (
