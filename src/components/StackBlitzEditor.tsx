@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useState, useMemo } from "react";
 import sdk from "@stackblitz/sdk";
 import { Button } from "@/components/ui/button";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, ExternalLink } from "lucide-react";
 
 interface StackBlitzEditorProps {
   code: string;
@@ -9,67 +9,64 @@ interface StackBlitzEditorProps {
 }
 
 export const StackBlitzEditor = ({ code, title = "Angular Example" }: StackBlitzEditorProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isResetting, setIsResetting] = useState(false);
-  const originalCode = useRef(code);
+  const [key, setKey] = useState(0);
+  const originalCode = useMemo(() => code, []);
 
-  const embedProject = (container: HTMLDivElement, codeContent: string) => {
-    // Clear container
-    container.innerHTML = '';
-    
-    sdk.embedProject(
-      container,
-      {
-        title: title,
-        description: "Angular code example from lesson",
-        template: "angular-cli",
-        files: {
-          "src/app/app.component.ts": codeContent,
-          "src/app/app.component.html": "<app-root></app-root>",
-          "src/main.ts": `import { bootstrapApplication } from '@angular/platform-browser';
+  const projectConfig = useMemo(() => ({
+    title: title,
+    description: "Angular code example from lesson",
+    template: "angular-cli" as const,
+    files: {
+      "src/app/app.component.ts": code,
+      "src/app/app.component.html": "<app-root></app-root>",
+      "src/main.ts": `import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component';
 
 bootstrapApplication(AppComponent);`,
-        },
-      },
-      {
-        height: 500,
-        openFile: "src/app/app.component.ts",
-        view: "preview",
-        theme: "dark",
-      }
-    );
-  };
-
-  useEffect(() => {
-    if (containerRef.current) {
-      embedProject(containerRef.current, code);
-    }
-  }, [code, title]);
+    },
+  }), [code, title]);
 
   const handleReset = () => {
-    if (containerRef.current) {
-      setIsResetting(true);
-      embedProject(containerRef.current, originalCode.current);
-      setTimeout(() => setIsResetting(false), 500);
-    }
+    setKey(prev => prev + 1);
+  };
+
+  const handleOpenInStackBlitz = async () => {
+    await sdk.openProject({
+      ...projectConfig,
+      files: {
+        ...projectConfig.files,
+        "src/app/app.component.ts": originalCode,
+      }
+    });
   };
 
   return (
-    <div className="relative group">
-      <div className="absolute top-2 right-2 z-10">
+    <div className="space-y-3">
+      <div className="flex gap-2 justify-end">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleOpenInStackBlitz}
+        >
+          <ExternalLink className="w-4 h-4 mr-1" />
+          Open in StackBlitz
+        </Button>
         <Button
           variant="secondary"
           size="sm"
           onClick={handleReset}
-          disabled={isResetting}
-          className="shadow-lg"
         >
           <RotateCcw className="w-4 h-4 mr-1" />
-          {isResetting ? "Resetting..." : "Reset"}
+          Reset
         </Button>
       </div>
-      <div ref={containerRef} className="rounded-lg overflow-hidden border border-border" />
+      <iframe
+        key={key}
+        src={`https://stackblitz.com/edit/angular-${title?.toLowerCase().replace(/\s+/g, '-') || 'example'}?embed=1&file=src/app/app.component.ts&hideExplorer=1&hideNavigation=1&view=preview&theme=dark`}
+        className="w-full h-[500px] rounded-lg border border-border"
+        title={title}
+        sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+      />
     </div>
   );
 };
