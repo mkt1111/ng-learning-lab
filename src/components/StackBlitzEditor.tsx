@@ -18,12 +18,18 @@ export const StackBlitzEditor = ({ code, title = "Angular Example" }: StackBlitz
     description: "Angular code example from lesson",
     template: "angular-cli" as const,
     files: {
-      "src/app/app.component.ts": code,
-      "src/app/app.component.html": "<app-root></app-root>",
       "src/main.ts": `import { bootstrapApplication } from '@angular/platform-browser';
-import { AppComponent } from './app/app.component';
+import { Component } from '@angular/core';
 
-bootstrapApplication(AppComponent);`,
+${code}
+
+bootstrapApplication(AppComponent).catch(err => console.error(err));`,
+      "src/styles.css": `body { 
+  font-family: Arial, sans-serif; 
+  padding: 20px;
+  background: #1e1e1e;
+  color: #fff;
+}`,
     },
   }), [code, title]);
 
@@ -40,13 +46,23 @@ bootstrapApplication(AppComponent);`,
         {
           ...projectConfig,
           files: {
-            ...projectConfig.files,
-            "src/app/app.component.ts": codeContent,
+            "src/main.ts": `import { bootstrapApplication } from '@angular/platform-browser';
+import { Component } from '@angular/core';
+
+${codeContent}
+
+bootstrapApplication(AppComponent).catch(err => console.error(err));`,
+            "src/styles.css": `body { 
+  font-family: Arial, sans-serif; 
+  padding: 20px;
+  background: #1e1e1e;
+  color: #fff;
+}`,
           }
         },
         {
           height: 500,
-          openFile: "src/app/app.component.ts",
+          openFile: "src/main.ts",
           view: "preview",
           theme: "dark",
           hideExplorer: true,
@@ -77,8 +93,18 @@ bootstrapApplication(AppComponent);`,
     await sdk.openProject({
       ...projectConfig,
       files: {
-        ...projectConfig.files,
-        "src/app/app.component.ts": originalCode,
+        "src/main.ts": `import { bootstrapApplication } from '@angular/platform-browser';
+import { Component } from '@angular/core';
+
+${originalCode}
+
+bootstrapApplication(AppComponent).catch(err => console.error(err));`,
+        "src/styles.css": `body { 
+  font-family: Arial, sans-serif; 
+  padding: 20px;
+  background: #1e1e1e;
+  color: #fff;
+}`,
       }
     });
   };
