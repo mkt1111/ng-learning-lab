@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import sdk from "@stackblitz/sdk";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, ExternalLink } from "lucide-react";
@@ -9,7 +9,8 @@ interface StackBlitzEditorProps {
 }
 
 export const StackBlitzEditor = ({ code, title = "Angular Example" }: StackBlitzEditorProps) => {
-  const [key, setKey] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isEmbedding, setIsEmbedding] = useState(false);
   const originalCode = useMemo(() => code, []);
 
   const projectConfig = useMemo(() => ({
@@ -26,8 +27,50 @@ bootstrapApplication(AppComponent);`,
     },
   }), [code, title]);
 
+  const embedProject = async (codeContent: string) => {
+    if (!containerRef.current) return;
+    
+    try {
+      setIsEmbedding(true);
+      // Clear the container first
+      containerRef.current.innerHTML = '';
+      
+      await sdk.embedProject(
+        containerRef.current,
+        {
+          ...projectConfig,
+          files: {
+            ...projectConfig.files,
+            "src/app/app.component.ts": codeContent,
+          }
+        },
+        {
+          height: 500,
+          openFile: "src/app/app.component.ts",
+          view: "preview",
+          theme: "dark",
+          hideExplorer: true,
+          hideNavigation: true,
+        }
+      );
+    } catch (error) {
+      console.error("Failed to embed StackBlitz project:", error);
+    } finally {
+      setIsEmbedding(false);
+    }
+  };
+
+  useEffect(() => {
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      embedProject(code);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, [code]);
+
   const handleReset = () => {
-    setKey(prev => prev + 1);
+    embedProject(originalCode);
   };
 
   const handleOpenInStackBlitz = async () => {
@@ -55,18 +98,22 @@ bootstrapApplication(AppComponent);`,
           variant="secondary"
           size="sm"
           onClick={handleReset}
+          disabled={isEmbedding}
         >
           <RotateCcw className="w-4 h-4 mr-1" />
-          Reset
+          {isEmbedding ? "Resetting..." : "Reset"}
         </Button>
       </div>
-      <iframe
-        key={key}
-        src={`https://stackblitz.com/edit/angular-${title?.toLowerCase().replace(/\s+/g, '-') || 'example'}?embed=1&file=src/app/app.component.ts&hideExplorer=1&hideNavigation=1&view=preview&theme=dark`}
-        className="w-full h-[500px] rounded-lg border border-border"
-        title={title}
-        sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
-      />
+      <div 
+        ref={containerRef} 
+        className="w-full min-h-[500px] rounded-lg border border-border bg-muted/30"
+      >
+        {isEmbedding && (
+          <div className="flex items-center justify-center h-[500px]">
+            <p className="text-muted-foreground">Loading editor...</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
