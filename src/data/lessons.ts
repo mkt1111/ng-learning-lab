@@ -115,9 +115,18 @@ export class UserCardComponent {
     content: `Angular provides four types of data binding to coordinate between components and templates:
 
 **1. Interpolation {{ }}** - One-way from component to view
+Displays component data in the template.
+
 **2. Property Binding [ ]** - One-way from component to view
-**3. Event Binding ( )** - One-way from view to component  
-**4. Two-way Binding [( )]** - Bidirectional with [(ngModel)]
+Sets element properties dynamically from component data.
+
+**3. Event Binding ( )** - One-way from view to component
+Responds to user events like clicks, typing, etc.
+
+**4. Two-way Binding [( )]** - Bidirectional synchronization
+Combines property and event binding. Most commonly used with **ngModel**, which keeps form inputs and component data in sync automatically. When the user types in an input, the component property updates. When the component changes the property, the input updates.
+
+Note: To use ngModel, you need to import FormsModule in your Angular module.
 
 These bindings enable reactive UIs that automatically update when data changes.`,
     codeExample: `import { Component } from '@angular/core';
