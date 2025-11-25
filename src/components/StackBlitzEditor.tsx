@@ -31,6 +31,11 @@ export const StackBlitzEditor = ({ code, title = "Angular Example" }: StackBlitz
     return match ? match[1] : 'AppComponent';
   };
 
+  const extractSelector = (codeStr: string): string => {
+    const match = codeStr.match(/selector\s*:\s*['"`](.*?)['"`]/);
+    return match ? match[1] : 'app-root';
+  };
+
   // Convert non-standalone component to standalone
   const convertToStandalone = (codeStr: string): string => {
     // Check if already standalone
@@ -53,6 +58,7 @@ export const StackBlitzEditor = ({ code, title = "Angular Example" }: StackBlitz
   const projectConfig = useMemo(() => {
     const standaloneCode = convertToStandalone(code);
     const compName = extractComponentName(standaloneCode);
+    const selector = extractSelector(standaloneCode);
     
     return {
       title: title,
@@ -69,7 +75,7 @@ export const StackBlitzEditor = ({ code, title = "Angular Example" }: StackBlitz
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-  <app-root></app-root>
+  <${selector}></${selector}>
 </body>
 </html>`,
         "src/app/app.component.ts": `import { CommonModule } from '@angular/common';
@@ -99,6 +105,7 @@ bootstrapApplication(${compName})
       
       const standaloneCode = convertToStandalone(codeContent);
       const compName = extractComponentName(standaloneCode);
+      const selector = extractSelector(standaloneCode);
       
       await sdk.embedProject(
         containerRef.current,
@@ -117,7 +124,7 @@ bootstrapApplication(${compName})
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-  <app-root></app-root>
+  <${selector}></${selector}>
 </body>
 </html>`,
             "src/app/app.component.ts": `import { CommonModule } from '@angular/common';
