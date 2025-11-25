@@ -26,6 +26,18 @@ export const StackBlitzEditor = ({ code, title = "Angular Example" }: StackBlitz
     description: "Angular code example from lesson",
     template: "angular-cli" as const,
     files: {
+      "src/index.html": `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>${title}</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>`,
       "src/app/app.component.ts": code,
       "src/app/app.module.ts": `import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -68,6 +80,18 @@ platformBrowserDynamic().bootstrapModule(AppModule)
           description: "Angular code example from lesson",
           template: "angular-cli" as const,
           files: {
+            "src/index.html": `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>${title}</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>`,
             "src/app/app.component.ts": codeContent,
             "src/app/app.module.ts": `import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
