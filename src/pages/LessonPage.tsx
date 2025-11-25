@@ -62,7 +62,7 @@ const LessonPage = () => {
             <div className="mt-8">
               <h2 className="text-2xl font-semibold mb-4 text-foreground">Interactive Code Example</h2>
               <p className="text-muted-foreground mb-4">Edit the code below and see the results in real-time. Click "Reset" to restore the original example.</p>
-              <StackBlitzEditor code={lesson.codeExample} title={lesson.title} />
+              <StackBlitzEditor key={lesson.id} code={lesson.codeExample} title={lesson.title} />
             </div>
           )}
 
