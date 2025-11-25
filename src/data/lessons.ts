@@ -164,17 +164,19 @@ export class BindingDemoComponent {
     description: "Understand structural and attribute directives to manipulate the DOM dynamically.",
     content: `Directives are classes that add behavior to elements in Angular applications. There are three types:
 
-**Structural Directives** - Change DOM layout
+**Structural Directives** - Change DOM layout by adding/removing elements
 - *ngIf - Conditionally render elements
-- *ngFor - Repeat elements
-- *ngSwitch - Switch between views
+- *ngFor - Repeat elements for each item in an array
+- *ngSwitch - Switch between multiple views
 
-**Attribute Directives** - Change appearance/behavior
-- ngClass - Add/remove CSS classes
-- ngStyle - Add/remove inline styles
-- ngModel - Two-way data binding
+**Attribute Directives** - Change appearance or behavior without changing structure
+- ngClass - Dynamically add/remove CSS classes
+- ngStyle - Dynamically add/remove inline styles
+- ngModel - Creates two-way data binding (updates component when input changes and vice versa)
 
-**Custom Directives** - Create your own reusable behaviors`,
+**Custom Directives** - Create your own reusable behaviors
+
+Note: ngModel was covered in the Data Binding lesson - it's listed here as an attribute directive because it modifies the behavior of form elements.`,
     codeExample: `import { Component } from '@angular/core';
 
 @Component({
