@@ -97,18 +97,23 @@ bootstrapApplication(${compName})
   }, [code, title]);
 
   const embedProject = async (codeContent: string) => {
-    if (!containerRef.current) return;
+    const container = containerRef.current;
+    if (!container) return;
     
     try {
       setIsEmbedding(true);
-      containerRef.current.innerHTML = '';
+      
+      // Clear any existing content
+      while (container.firstChild) {
+        container.removeChild(container.firstChild);
+      }
       
       const standaloneCode = convertToStandalone(codeContent);
       const compName = extractComponentName(standaloneCode);
       const selector = extractSelector(standaloneCode);
       
       await sdk.embedProject(
-        containerRef.current,
+        container,
         {
           title: title,
           description: "Angular code example from lesson",
