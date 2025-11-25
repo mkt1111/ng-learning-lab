@@ -1,5 +1,5 @@
 import { useParams, Navigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { CodeBlock } from "@/components/CodeBlock";
 import { QuizCard } from "@/components/QuizCard";
@@ -12,9 +12,12 @@ import { lessons } from "@/data/lessons";
 const LessonPage = () => {
   const { lessonId } = useParams<{ lessonId: string }>();
   const lesson = lessons.find((l) => l.id === lessonId);
+  const mainRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (mainRef.current) {
+      mainRef.current.scrollTop = 0;
+    }
   }, [lessonId]);
 
   if (!lesson) {
@@ -36,7 +39,7 @@ const LessonPage = () => {
       <ThemeToggle />
       <Sidebar currentLessonId={lessonId || ""} />
       
-      <main className="flex-1 overflow-y-auto">
+      <main ref={mainRef} className="flex-1 overflow-y-auto">
         <div className="max-w-4xl mx-auto px-8 py-12">
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-4">
