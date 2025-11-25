@@ -1,4 +1,5 @@
 import { useParams, Navigate } from "react-router-dom";
+import { useEffect } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { CodeBlock } from "@/components/CodeBlock";
 import { QuizCard } from "@/components/QuizCard";
@@ -11,6 +12,10 @@ import { lessons } from "@/data/lessons";
 const LessonPage = () => {
   const { lessonId } = useParams<{ lessonId: string }>();
   const lesson = lessons.find((l) => l.id === lessonId);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [lessonId]);
 
   if (!lesson) {
     return <Navigate to="/lesson/intro" replace />;
