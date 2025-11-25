@@ -26,6 +26,18 @@ export const StackBlitzEditor = ({ code, title = "Angular Example" }: StackBlitz
     description: "Angular code example from lesson",
     template: "angular-cli" as const,
     files: {
+      "src/index.html": `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Angular Example</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>`,
       "src/app/app.component.ts": code,
       "src/main.ts": `import { bootstrapApplication } from '@angular/platform-browser';
 import { ${componentName} } from './app/app.component';
@@ -56,6 +68,18 @@ bootstrapApplication(${componentName}).catch(err => console.error(err));`,
           description: "Angular code example from lesson",
           template: "angular-cli" as const,
           files: {
+            "src/index.html": `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Angular Example</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>`,
             "src/app/app.component.ts": codeContent,
             "src/main.ts": `import { bootstrapApplication } from '@angular/platform-browser';
 import { ${compName} } from './app/app.component';
