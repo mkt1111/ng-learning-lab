@@ -1,7 +1,7 @@
 import { useParams, Navigate } from "react-router-dom";
 import { useEffect, useRef } from "react";
 import { Sidebar } from "@/components/Sidebar";
-import { StackBlitzEditor } from "@/components/StackBlitzEditor";
+import { CodeBlock } from "@/components/CodeBlock";
 import { QuizCard } from "@/components/QuizCard";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Badge } from "@/components/ui/badge";
@@ -60,9 +60,8 @@ const LessonPage = () => {
 
           {lesson.codeExample && (
             <div className="mt-8">
-              <h2 className="text-2xl font-semibold mb-4 text-foreground">Interactive Code Example</h2>
-              <p className="text-muted-foreground mb-4">Edit the code below and see the results in real-time. Click "Reset" to restore the original example.</p>
-              <StackBlitzEditor key={lesson.id} code={lesson.codeExample} title={lesson.title} />
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">Code Example</h2>
+              <CodeBlock code={lesson.codeExample} language="typescript" />
             </div>
           )}
 
