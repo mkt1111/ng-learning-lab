@@ -33,7 +33,15 @@ export const lessons: Lesson[] = [
 - Built-in routing and forms
 - RxJS for reactive programming
 
-Angular is perfect for enterprise applications that need structure, maintainability, and scalability.`,
+Angular is perfect for enterprise applications that need structure, maintainability, and scalability.
+
+**Common Use Cases:**
+- Enterprise web applications with complex requirements
+- Single-page applications (SPAs) with rich user interactions
+- Progressive web apps (PWAs) that work offline
+- Admin dashboards and content management systems
+- E-commerce platforms requiring robust state management
+- Large-scale applications maintained by multiple teams`,
     codeExample: `// A simple Angular component
 import { Component } from '@angular/core';
 
@@ -58,6 +66,131 @@ export class WelcomeComponent {
     }
   },
   {
+    id: "typescript-basics",
+    title: "TypeScript Fundamentals",
+    category: "Getting Started",
+    difficulty: "beginner",
+    description: "Master TypeScript basics including classes, interfaces, and module exports.",
+    content: `TypeScript is a superset of JavaScript that adds static typing and object-oriented features. Understanding TypeScript is essential for Angular development.
+
+**Classes:**
+Classes are blueprints for creating objects with properties and methods. They support inheritance, encapsulation, and are the foundation of Angular components and services.
+
+**Key Keywords:**
+- **export**: Makes a class, function, or variable available to other files
+- **import**: Brings exported items from other files into the current file
+- **public**: Members accessible from anywhere (default)
+- **private**: Members only accessible within the class
+- **protected**: Members accessible within the class and subclasses
+- **readonly**: Properties that can't be changed after initialization
+- **static**: Properties/methods that belong to the class itself, not instances
+
+**Interfaces:**
+Define contracts for object shapes without implementation. Used extensively in Angular for type safety.
+
+**Types:**
+TypeScript provides string, number, boolean, any, void, null, undefined, and custom types.
+
+**Common Use Cases:**
+- Creating reusable component classes with typed properties
+- Defining service classes with dependency injection
+- Building type-safe data models and API response interfaces
+- Sharing utility classes across multiple modules
+- Creating abstract base classes for common functionality`,
+    codeExample: `// Basic class with export
+export class User {
+  // Properties with types
+  public id: number;
+  public name: string;
+  private password: string;  // Only accessible within this class
+  readonly createdAt: Date;   // Cannot be changed after set
+  
+  // Static property - belongs to class, not instances
+  static userCount: number = 0;
+  
+  // Constructor
+  constructor(id: number, name: string, password: string) {
+    this.id = id;
+    this.name = name;
+    this.password = password;
+    this.createdAt = new Date();
+    User.userCount++;
+  }
+  
+  // Public method
+  public greet(): string {
+    return \`Hello, my name is \${this.name}\`;
+  }
+  
+  // Private method - only usable within this class
+  private validatePassword(): boolean {
+    return this.password.length >= 8;
+  }
+  
+  // Static method - called on class, not instance
+  static getTotalUsers(): number {
+    return User.userCount;
+  }
+}
+
+// Interface definition
+export interface Product {
+  id: number;
+  name: string;
+  price: number;
+  inStock?: boolean;  // Optional property
+}
+
+// Using the class
+import { User } from './user';  // Import the exported class
+
+const user1 = new User(1, 'Alice', 'secret123');
+console.log(user1.greet());  // "Hello, my name is Alice"
+console.log(User.getTotalUsers());  // 1
+
+// Class with inheritance
+export class AdminUser extends User {
+  protected adminLevel: number;
+  
+  constructor(id: number, name: string, password: string, adminLevel: number) {
+    super(id, name, password);  // Call parent constructor
+    this.adminLevel = adminLevel;
+  }
+  
+  public greet(): string {
+    return \`Admin \${this.name} (Level \${this.adminLevel})\`;
+  }
+}
+
+// Generic class
+export class DataStore<T> {
+  private data: T[] = [];
+  
+  add(item: T): void {
+    this.data.push(item);
+  }
+  
+  get(index: number): T {
+    return this.data[index];
+  }
+}
+
+// Usage with type
+const userStore = new DataStore<User>();
+userStore.add(user1);`,
+    quiz: {
+      question: "What does the 'export' keyword do in TypeScript?",
+      options: [
+        "Deletes a class from memory",
+        "Makes a class or function available to be imported in other files",
+        "Exports data to a file",
+        "Creates a copy of a class"
+      ],
+      correctAnswer: 1,
+      explanation: "The 'export' keyword makes classes, functions, or variables available to be imported and used in other files, enabling modular code organization."
+    }
+  },
+  {
     id: "components",
     title: "Components & Templates",
     category: "Core Concepts",
@@ -71,7 +204,15 @@ export class WelcomeComponent {
 - **Styles**: Component-specific CSS
 - **Metadata**: @Component decorator with configuration
 
-Components are reusable, testable, and encapsulated. They control a portion of the screen called a view.`,
+Components are reusable, testable, and encapsulated. They control a portion of the screen called a view.
+
+**Common Use Cases:**
+- Building reusable UI elements (buttons, cards, modals)
+- Creating page layouts and views
+- Displaying dynamic data from APIs
+- Handling user interactions and form inputs
+- Building widget-like features (charts, calendars, file uploaders)
+- Creating nested component hierarchies for complex UIs`,
     codeExample: `import { Component } from '@angular/core';
 
 @Component({
@@ -134,7 +275,15 @@ Combines property and event binding. Most commonly used with **ngModel**, which 
 
 Note: To use ngModel, you need to import FormsModule in your Angular module.
 
-These bindings enable reactive UIs that automatically update when data changes.`,
+These bindings enable reactive UIs that automatically update when data changes.
+
+**Common Use Cases:**
+- Form inputs synchronized with component data
+- Disabling/enabling buttons based on form validity
+- Updating UI elements based on user permissions
+- Real-time search filtering as users type
+- Toggle switches and checkboxes bound to settings
+- Dynamic styling based on component state`,
     codeExample: `import { Component } from '@angular/core';
 
 @Component({
@@ -191,7 +340,15 @@ export class BindingDemoComponent {
 
 **Custom Directives** - Create your own reusable behaviors
 
-Note: ngModel was covered in the Data Binding lesson - it's listed here as an attribute directive because it modifies the behavior of form elements.`,
+Note: ngModel was covered in the Data Binding lesson - it's listed here as an attribute directive because it modifies the behavior of form elements.
+
+**Common Use Cases:**
+- Showing/hiding elements based on authentication state
+- Rendering lists of items from APIs
+- Applying conditional styling (error states, active items)
+- Creating permission-based UI visibility
+- Building dynamic forms with conditional fields
+- Highlighting or formatting elements based on data`,
     codeExample: `import { Component } from '@angular/core';
 
 @Component({
@@ -260,7 +417,15 @@ export class DirectivesDemoComponent {
 - Easy to test with mock services
 - Automatic instance management
 
-Services are perfect for HTTP calls, data management, logging, and business logic.`,
+Services are perfect for HTTP calls, data management, logging, and business logic.
+
+**Common Use Cases:**
+- Managing API calls and data fetching
+- Sharing state between unrelated components
+- Authentication and authorization logic
+- Logging and error handling services
+- Business logic that multiple components need
+- Caching and local storage management`,
     codeExample: `// user.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -333,7 +498,15 @@ export class UsersComponent implements OnInit {
 - Lazy loading for performance
 - Preloading strategies
 
-The router maintains browser history and enables deep linking to application states.`,
+The router maintains browser history and enables deep linking to application states.
+
+**Common Use Cases:**
+- Multi-page application navigation
+- Protecting routes with authentication guards
+- Loading feature modules on demand
+- URL parameter-based content (e.g., /product/123)
+- Tab-based interfaces with URL state
+- Breadcrumb navigation systems`,
     codeExample: `// app-routing.module.ts
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -420,7 +593,15 @@ export class UserDetailComponent {
 - Easier to test
 - Recommended for most cases
 
-Both support validation, error handling, and dynamic forms.`,
+Both support validation, error handling, and dynamic forms.
+
+**Common Use Cases:**
+- User registration and login forms
+- Multi-step wizards with validation
+- Dynamic forms generated from configuration
+- Forms with complex validation rules
+- Search filters with multiple criteria
+- Profile update and settings pages`,
     codeExample: `// Reactive Form Example
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -504,7 +685,15 @@ export class UserFormComponent {
 - Subscribe to consume data
 - Unsubscribe to prevent memory leaks
 
-Observables are lazy - they don't execute until subscribed to.`,
+Observables are lazy - they don't execute until subscribed to.
+
+**Common Use Cases:**
+- Fetching data from REST APIs
+- Real-time data streams (WebSocket, Server-Sent Events)
+- Autocomplete search with debouncing
+- Polling for updates at intervals
+- Combining multiple API responses
+- Handling loading states and errors gracefully`,
     codeExample: `import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
@@ -593,7 +782,15 @@ export class HttpDemoComponent implements OnInit, OnDestroy {
 
 **Order:** Constructor → ngOnChanges → ngOnInit → ngDoCheck → ngAfterContentInit → ngAfterContentChecked → ngAfterViewInit → ngAfterViewChecked → ngOnDestroy
 
-Use these hooks to control initialization, react to changes, and clean up resources.`,
+Use these hooks to control initialization, react to changes, and clean up resources.
+
+**Common Use Cases:**
+- Initializing components with API data
+- Cleaning up timers and subscriptions
+- Responding to input property changes
+- Accessing child components after view initialization
+- Implementing custom change detection
+- Resource management and memory leak prevention`,
     codeExample: `import { 
   Component, OnInit, OnDestroy, OnChanges,
   Input, SimpleChanges, AfterViewInit, ViewChild
@@ -675,7 +872,15 @@ export class LifecycleDemoComponent
 - **SlicePipe**: Extract array/string portions
 - **AsyncPipe**: Subscribe to Observables
 
-Pipes are chainable and can accept parameters.`,
+Pipes are chainable and can accept parameters.
+
+**Common Use Cases:**
+- Formatting dates in user's locale
+- Displaying prices in correct currency format
+- Truncating long text with ellipsis
+- Converting data for display without modifying the model
+- Debugging complex objects in templates
+- Automatically managing Observable subscriptions`,
     codeExample: `// Using built-in pipes
 import { Component } from '@angular/core';
 
@@ -755,7 +960,15 @@ export class ExponentialPipe implements PipeTransform {
 - Medium apps: Services with RxJS
 - Large apps: NgRx or Akita
 
-The key is predictable state updates and avoiding prop drilling.`,
+The key is predictable state updates and avoiding prop drilling.
+
+**Common Use Cases:**
+- Managing user authentication state across the app
+- Shopping cart state in e-commerce applications
+- Complex forms with interdependent fields
+- Real-time collaborative features
+- Undo/redo functionality
+- Application-wide settings and preferences`,
     codeExample: `// State management with BehaviorSubject
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -878,7 +1091,15 @@ export class HeaderComponent {
 - Test behavior, not implementation
 - Use TestBed for component testing
 - Mock HTTP calls with HttpClientTestingModule
-- Aim for good coverage but focus on critical paths`,
+- Aim for good coverage but focus on critical paths
+
+**Common Use Cases:**
+- Testing component rendering and user interactions
+- Verifying service API calls and data transformations
+- Testing form validation logic
+- E2E testing of user workflows (login, checkout)
+- Testing routing and navigation
+- Ensuring accessibility requirements are met`,
     codeExample: `// Component unit test
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UserComponent } from './user.component';
@@ -1009,7 +1230,15 @@ describe('UserService', () => {
 - Virtual scrolling for long lists
 - Memoization with pure pipes
 - Avoid expensive operations in templates
-- Use Web Workers for heavy computations`,
+- Use Web Workers for heavy computations
+
+**Common Use Cases:**
+- Optimizing large data tables with virtual scrolling
+- Improving initial load time with lazy loading
+- Reducing re-renders with OnPush change detection
+- Optimizing images and assets for faster loading
+- Code splitting for better caching
+- Performance monitoring and profiling`,
     codeExample: `// OnPush Change Detection
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 
