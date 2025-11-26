@@ -10,6 +10,8 @@ const ANGULAR_DEPENDENCIES = {
   "@angular/platform-browser": "latest",
   "@angular/platform-browser-dynamic": "latest",
   "@angular/forms": "latest",
+  "@angular/common/http": "latest",
+  "@angular/router": "latest",
   "rxjs": "latest",
   "zone.js": "latest",
   "tslib": "latest",
@@ -36,6 +38,60 @@ export const StackBlitzEditor = ({ code, title = "Angular Example" }: StackBlitz
     return match ? match[1] : 'app-root';
   };
 
+  // Detect what imports are needed based on the code content
+  const detectRequiredImports = (codeStr: string): string[] => {
+    const imports = ['CommonModule'];
+    
+    if (codeStr.includes('ngModel') || codeStr.includes('FormsModule')) {
+      imports.push('FormsModule');
+    }
+    if (codeStr.includes('formGroup') || codeStr.includes('FormBuilder') || codeStr.includes('ReactiveFormsModule')) {
+      imports.push('ReactiveFormsModule');
+    }
+    if (codeStr.includes('HttpClient') || codeStr.includes('HttpClientModule')) {
+      imports.push('HttpClientModule');
+    }
+    if (codeStr.includes('RouterModule') || codeStr.includes('Router')) {
+      imports.push('RouterModule');
+    }
+    
+    return imports;
+  };
+
+  // Add missing type definitions and imports
+  const addMissingDefinitions = (codeStr: string): string => {
+    let result = codeStr;
+    
+    // Add User interface if referenced but not defined
+    if ((codeStr.includes('User') || codeStr.includes('user:')) && !codeStr.includes('interface User')) {
+      result = `interface User {
+  id: number;
+  name: string;
+  email: string;
+}\n\n` + result;
+    }
+    
+    // Add Notification interface if referenced but not defined
+    if (codeStr.includes('Notification') && !codeStr.includes('interface Notification')) {
+      result = `interface Notification {
+  id: number;
+  message: string;
+  type: string;
+}\n\n` + result;
+    }
+    
+    // Add missing RxJS imports
+    if (codeStr.includes(' of(') && !codeStr.includes("import { of }") && !codeStr.includes("import {of}")) {
+      result = `import { of } from 'rxjs';\n` + result;
+    }
+    
+    if (codeStr.includes(' map(') && !codeStr.includes("import { map }")) {
+      result = `import { map } from 'rxjs/operators';\n` + result;
+    }
+    
+    return result;
+  };
+
   // Convert non-standalone component to standalone
   const convertToStandalone = (codeStr: string): string => {
     // Check if already standalone
@@ -43,11 +99,14 @@ export const StackBlitzEditor = ({ code, title = "Angular Example" }: StackBlitz
       return codeStr;
     }
 
+    const requiredImports = detectRequiredImports(codeStr);
+    const importsStr = requiredImports.join(', ');
+
     // Add standalone: true and imports to the @Component decorator
     const componentMatch = codeStr.match(/@Component\(\{([^}]+)\}\)/s);
     if (componentMatch) {
       const decoratorContent = componentMatch[1];
-      const newDecorator = `@Component({\n  standalone: true,\n  imports: [CommonModule, FormsModule],${decoratorContent}})`;
+      const newDecorator = `@Component({\n  standalone: true,\n  imports: [${importsStr}],${decoratorContent}})`;
       return codeStr.replace(/@Component\(\{[^}]+\}\)/s, newDecorator);
     }
     return codeStr;
@@ -56,9 +115,29 @@ export const StackBlitzEditor = ({ code, title = "Angular Example" }: StackBlitz
   const componentName = useMemo(() => extractComponentName(code), [code]);
 
   const projectConfig = useMemo(() => {
-    const standaloneCode = convertToStandalone(code);
+    const codeWithDefinitions = addMissingDefinitions(code);
+    const standaloneCode = convertToStandalone(codeWithDefinitions);
     const compName = extractComponentName(standaloneCode);
     const selector = extractSelector(standaloneCode);
+    const requiredImports = detectRequiredImports(code);
+    
+    // Build import statements
+    const importStatements = [];
+    if (requiredImports.includes('CommonModule')) {
+      importStatements.push("import { CommonModule } from '@angular/common';");
+    }
+    if (requiredImports.includes('FormsModule')) {
+      importStatements.push("import { FormsModule } from '@angular/forms';");
+    }
+    if (requiredImports.includes('ReactiveFormsModule')) {
+      importStatements.push("import { ReactiveFormsModule } from '@angular/forms';");
+    }
+    if (requiredImports.includes('HttpClientModule')) {
+      importStatements.push("import { HttpClientModule } from '@angular/common/http';");
+    }
+    if (requiredImports.includes('RouterModule')) {
+      importStatements.push("import { RouterModule } from '@angular/router';");
+    }
     
     return {
       title: title,
@@ -78,8 +157,7 @@ export const StackBlitzEditor = ({ code, title = "Angular Example" }: StackBlitz
   <${selector}></${selector}>
 </body>
 </html>`,
-        "src/app/app.component.ts": `import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+        "src/app/app.component.ts": `${importStatements.join('\n')}
 ${standaloneCode}`,
         "src/main.ts": `import { bootstrapApplication } from '@angular/platform-browser';
 import { ${compName} } from './app/app.component';
@@ -91,6 +169,30 @@ bootstrapApplication(${compName})
   padding: 20px;
   background: #1e1e1e;
   color: #fff;
+}
+
+button {
+  background: #3f51b5;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 4px;
+}
+
+button:hover {
+  background: #303f9f;
+}
+
+input {
+  padding: 8px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #2a2a2a;
+  color: white;
+  margin: 4px;
 }`,
       },
     };
@@ -108,9 +210,29 @@ bootstrapApplication(${compName})
         container.removeChild(container.firstChild);
       }
       
-      const standaloneCode = convertToStandalone(codeContent);
+      const codeWithDefinitions = addMissingDefinitions(codeContent);
+      const standaloneCode = convertToStandalone(codeWithDefinitions);
       const compName = extractComponentName(standaloneCode);
       const selector = extractSelector(standaloneCode);
+      const requiredImports = detectRequiredImports(codeContent);
+      
+      // Build import statements
+      const importStatements = [];
+      if (requiredImports.includes('CommonModule')) {
+        importStatements.push("import { CommonModule } from '@angular/common';");
+      }
+      if (requiredImports.includes('FormsModule')) {
+        importStatements.push("import { FormsModule } from '@angular/forms';");
+      }
+      if (requiredImports.includes('ReactiveFormsModule')) {
+        importStatements.push("import { ReactiveFormsModule } from '@angular/forms';");
+      }
+      if (requiredImports.includes('HttpClientModule')) {
+        importStatements.push("import { HttpClientModule } from '@angular/common/http';");
+      }
+      if (requiredImports.includes('RouterModule')) {
+        importStatements.push("import { RouterModule } from '@angular/router';");
+      }
       
       await sdk.embedProject(
         container,
@@ -132,8 +254,7 @@ bootstrapApplication(${compName})
   <${selector}></${selector}>
 </body>
 </html>`,
-            "src/app/app.component.ts": `import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+            "src/app/app.component.ts": `${importStatements.join('\n')}
 ${standaloneCode}`,
             "src/main.ts": `import { bootstrapApplication } from '@angular/platform-browser';
 import { ${compName} } from './app/app.component';
@@ -145,6 +266,30 @@ bootstrapApplication(${compName})
   padding: 20px;
   background: #1e1e1e;
   color: #fff;
+}
+
+button {
+  background: #3f51b5;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 4px;
+}
+
+button:hover {
+  background: #303f9f;
+}
+
+input {
+  padding: 8px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #2a2a2a;
+  color: white;
+  margin: 4px;
 }`,
           }
         },
