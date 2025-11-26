@@ -20,7 +20,8 @@ const categoryIcons: Record<string, any> = {
 
 const lessonsByCategory = {
   "Getting Started": [
-    { id: "intro", title: "Introduction to Angular", difficulty: "beginner" }
+    { id: "intro", title: "Introduction to Angular", difficulty: "beginner" },
+    { id: "typescript-basics", title: "TypeScript Fundamentals", difficulty: "beginner" }
   ],
   "Core Concepts": [
     { id: "components", title: "Components & Templates", difficulty: "beginner" },
@@ -109,7 +110,7 @@ export const Sidebar = ({ currentLessonId }: SidebarProps) => {
 
       <div className="p-4 border-t border-sidebar-border">
         <div className="text-xs text-sidebar-foreground/60">
-          <p>13 lessons • 4 categories</p>
+          <p>14 lessons • 8 categories</p>
           <p className="mt-1">Master Angular from basics to advanced</p>
         </div>
       </div>
