@@ -39,13 +39,13 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-welcome',
-  template: \`
+  template: `
     <div class="welcome">
       <h1>{{ title }}</h1>
       <p>Welcome to Angular!</p>
     </div>
-  \`,
-  styles: [\`.welcome { text-align: center; }\`]
+  `,
+  styles: [`.welcome { text-align: center; }`]
 })
 export class WelcomeComponent {
   title = 'My Angular App';
@@ -76,33 +76,29 @@ Components are reusable, testable, and encapsulated. They control a portion of t
 
 @Component({
   selector: 'app-user-card',
-  template: \`
+  template: `
     <div class="user-card">
-      <h3>{{ userName }}</h3>
-      <p>{{ userEmail }}</p>
-      <button (click)="onSelect()">Select User</button>
-      <p *ngIf="isSelected" style="color: #4caf50; margin-top: 8px;">
-        ✓ User Selected!
-      </p>
+      <h3>User Card</h3>
+      <p>Name: {{ name }}</p>
+      <p>Role: {{ role }}</p>
+      <button (click)="promoteUser()">Promote</button>
     </div>
-  \`,
-  styles: [\`
+  `,
+  styles: [`
     .user-card {
       border: 1px solid #ddd;
       padding: 16px;
       border-radius: 8px;
       margin: 16px;
     }
-  \`]
+  `]
 })
 export class UserCardComponent {
-  userName = 'John Doe';
-  userEmail = 'john@example.com';
-  isSelected = false;
+  name = 'John Doe';
+  role = 'User';
 
-  onSelect() {
-    this.isSelected = !this.isSelected;
-    console.log('User selection toggled:', this.isSelected);
+  promoteUser() {
+    this.role = 'Admin';
   }
 }`,
     quiz: {
@@ -139,7 +135,7 @@ These bindings enable reactive UIs that automatically update when data changes.`
 
 @Component({
   selector: 'app-binding-demo',
-  template: \`
+  template: `
     <!-- Interpolation -->
     <h1>{{ title }}</h1>
     
@@ -152,7 +148,7 @@ These bindings enable reactive UIs that automatically update when data changes.`
     <!-- Two-way binding -->
     <input [(ngModel)]="username" placeholder="Enter name">
     <p>Hello, {{ username }}!</p>
-  \`
+  `
 })
 export class BindingDemoComponent {
   title = 'Data Binding Demo';
@@ -196,7 +192,7 @@ Note: ngModel was covered in the Data Binding lesson - it's listed here as an at
 
 @Component({
   selector: 'app-directives-demo',
-  template: \`
+  template: `
     <!-- *ngIf -->
     <div *ngIf="isLoggedIn">
       Welcome back, {{ username }}!
@@ -224,7 +220,7 @@ Note: ngModel was covered in the Data Binding lesson - it's listed here as an at
     }">
       Styled text
     </div>
-  \`
+  `
 })
 export class DirectivesDemoComponent {
   isLoggedIn = true;
@@ -279,7 +275,7 @@ export class UserService {
   }
 
   getUserById(id: number): Observable<User> {
-    return this.http.get<User>(\`\${this.apiUrl}/\${id}\`);
+    return this.http.get<User>(`${this.apiUrl}/${id}`);
   }
 }
 
@@ -289,11 +285,11 @@ import { UserService } from './user.service';
 
 @Component({
   selector: 'app-users',
-  template: \`
+  template: `
     <div *ngFor="let user of users">
       {{ user.name }}
     </div>
-  \`
+  `
 })
 export class UsersComponent implements OnInit {
   users: User[] = [];
@@ -368,10 +364,10 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-user-detail',
-  template: \`
+  template: `
     <button (click)="goBack()">Back</button>
     <h1>User {{ userId }}</h1>
-  \`
+  `
 })
 export class UserDetailComponent {
   userId: string;
@@ -427,7 +423,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-user-form',
-  template: \`
+  template: `
     <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
       <div>
         <label>Name:</label>
@@ -456,7 +452,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
         Submit
       </button>
     </form>
-  \`
+  `
 })
 export class UserFormComponent {
   userForm: FormGroup;
@@ -518,13 +514,13 @@ interface User {
 
 @Component({
   selector: 'app-http-demo',
-  template: \`
+  template: `
     <div *ngIf="loading">Loading...</div>
     <div *ngIf="error">{{ error }}</div>
     <div *ngFor="let user of users">
       {{ user.name }} - {{ user.email }}
     </div>
-  \`
+  `
 })
 export class HttpDemoComponent implements OnInit, OnDestroy {
   users: User[] = [];
@@ -601,10 +597,10 @@ Use these hooks to control initialization, react to changes, and clean up resour
 
 @Component({
   selector: 'app-lifecycle-demo',
-  template: \`
+  template: `
     <h2>{{ title }}</h2>
     <p #contentParagraph>Content goes here</p>
-  \`
+  `
 })
 export class LifecycleDemoComponent 
   implements OnInit, OnDestroy, OnChanges, AfterViewInit {
@@ -681,7 +677,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-pipes-demo',
-  template: \`
+  template: `
     <!-- Date pipe -->
     <p>{{ today | date:'fullDate' }}</p>
     <p>{{ today | date:'short' }}</p>
@@ -701,7 +697,7 @@ import { Component } from '@angular/core';
 
     <!-- Async pipe (auto-subscribes) -->
     <p>{{ users$ | async | json }}</p>
-  \`
+  `
 })
 export class PipesDemoComponent {
   today = new Date();
@@ -826,12 +822,12 @@ export class StateService {
 // Using in component
 @Component({
   selector: 'app-header',
-  template: \`
+  template: `
     <div [class.dark-mode]="(theme$ | async) === 'dark'">
       <span *ngIf="user$ | async as user">{{ user.name }}</span>
       <button (click)="toggleTheme()">Toggle Theme</button>
     </div>
-  \`
+  `
 })
 export class HeaderComponent {
   user$ = this.stateService.getUser();
@@ -1015,12 +1011,12 @@ import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 
 @Component({
   selector: 'app-user-card',
-  template: \`
+  template: `
     <div class="card">
       <h3>{{ user.name }}</h3>
       <p>{{ user.email }}</p>
     </div>
-  \`,
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserCardComponent {
@@ -1030,11 +1026,11 @@ export class UserCardComponent {
 // TrackBy for ngFor
 @Component({
   selector: 'app-user-list',
-  template: \`
+  template: `
     <div *ngFor="let user of users; trackBy: trackByUserId">
       <app-user-card [user]="user"></app-user-card>
     </div>
-  \`
+  `
 })
 export class UserListComponent {
   users: User[] = [];
@@ -1075,22 +1071,22 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'app-virtual-list',
-  template: \`
+  template: `
     <cdk-virtual-scroll-viewport itemSize="50" class="viewport">
       <div *cdkVirtualFor="let item of items" class="item">
         {{ item }}
       </div>
     </cdk-virtual-scroll-viewport>
-  \`,
-  styles: [\`
+  `,
+  styles: [`
     .viewport {
       height: 400px;
       width: 100%;
     }
-  \`]
+  `]
 })
 export class VirtualListComponent {
-  items = Array.from({length: 10000}, (_, i) => \`Item #\${i}\`);
+  items = Array.from({length: 10000}, (_, i) => `Item #${i}`);
 }`,
     quiz: {
       question: "What does the OnPush change detection strategy do?",
