@@ -72,15 +72,18 @@ export class WelcomeComponent {
 - **Metadata**: @Component decorator with configuration
 
 Components are reusable, testable, and encapsulated. They control a portion of the screen called a view.`,
-    codeExample: `import { Component, Input, Output, EventEmitter } from '@angular/core';
+    codeExample: `import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-user-card',
   template: \`
     <div class="user-card">
-      <h3>{{ user.name }}</h3>
-      <p>{{ user.email }}</p>
+      <h3>{{ userName }}</h3>
+      <p>{{ userEmail }}</p>
       <button (click)="onSelect()">Select User</button>
+      <p *ngIf="isSelected" style="color: #4caf50; margin-top: 8px;">
+        ✓ User Selected!
+      </p>
     </div>
   \`,
   styles: [\`
@@ -88,15 +91,18 @@ Components are reusable, testable, and encapsulated. They control a portion of t
       border: 1px solid #ddd;
       padding: 16px;
       border-radius: 8px;
+      margin: 16px;
     }
   \`]
 })
 export class UserCardComponent {
-  @Input() user!: { name: string; email: string };
-  @Output() userSelected = new EventEmitter<void>();
+  userName = 'John Doe';
+  userEmail = 'john@example.com';
+  isSelected = false;
 
   onSelect() {
-    this.userSelected.emit();
+    this.isSelected = !this.isSelected;
+    console.log('User selection toggled:', this.isSelected);
   }
 }`,
     quiz: {
