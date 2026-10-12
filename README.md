@@ -5,7 +5,7 @@ An Angular learning app with lessons on core Angular topics and an embedded code
 ## Features
 
 - Lessons covering TypeScript fundamentals, components and templates, data binding, directives, services and DI, routing, forms, HTTP and observables, pipes, lifecycle hooks, state management, testing and performance
-- Code examples with syntax-highlighted blocks
+- Code examples in styled code blocks
 - Embedded StackBlitz editor for running example code
 - Lesson quizzes
 - Light/dark theme toggle (saved in localStorage)
